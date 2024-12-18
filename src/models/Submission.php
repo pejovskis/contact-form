@@ -20,7 +20,17 @@ class Submission extends Model
     /**
      * @var string|null
      */
-    public $fromName;
+    public $fromFName;
+
+    /**
+     * @var string|null
+     */
+    public $fromLName;
+
+    /**
+     * @var string|null
+     */
+    public $fromSubject;
 
     /**
      * @var string|null
@@ -30,7 +40,7 @@ class Submission extends Model
     /**
      * @var string|null
      */
-    public $subject;
+    public $fromTelephone;
 
     /**
      * @var string|string[]|string[][]|null
@@ -44,16 +54,20 @@ class Submission extends Model
      */
     public $attachment;
 
+    public $cbDataProtection;
+
     /**
      * @inheritdoc
      */
     public function attributeLabels()
     {
         return [
-            'fromName' => \Craft::t('contact-form', 'Your Name'),
+            'fromFName' => \Craft::t('contact-form', 'Your Name'),
+            'fromLName' => \Craft::t('contact-form', 'Your Last Name'),
             'fromEmail' => \Craft::t('contact-form', 'Your Email'),
+            'fromSubject' => \Craft::t('contact-form', 'Subject'),
+            'fromTelephone' => \Craft::t('contact-form', 'Telephone'),
             'message' => \Craft::t('contact-form', 'Message'),
-            'subject' => \Craft::t('contact-form', 'Subject'),
         ];
     }
 
@@ -62,9 +76,21 @@ class Submission extends Model
      */
     protected function defineRules(): array
     {
-        return [
-            [['fromEmail', 'message'], 'required'],
-            [['fromEmail'], 'email'],
-        ];
+        $rules = [];
+        $fields = ['fromFName', 'fromLName', 'fromEmail', 'message', 'fromSubject', 'fromTelephone', 'cbDataProtection'];
+
+        // Loop through each field and add a 'required' rule only if it exists in the request
+        $request = \Craft::$app->getRequest();
+        foreach ($fields as $field) {
+            if ($request->getBodyParam($field) !== null) {
+                $rules[] = [[$field], 'required'];
+            }
+        }
+
+        if ($request->getBodyParam('fromEmail') !== null) {
+            $rules[] = [['fromEmail'], 'email'];
+        }
+
+        return $rules;
     }
 }

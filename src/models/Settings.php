@@ -26,6 +26,8 @@ class Settings extends Model
      */
     public $prependSubject;
 
+    public $prependTelephone;
+
     /**
      * @var bool
      */

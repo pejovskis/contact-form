@@ -10,21 +10,6 @@
 
 {% from _self import configWarning %}
 
-{{ forms.autosuggestField({
-  first:        true,
-  label:        "To Email"|t('contact-form'),
-  required:     true,
-  id:           'toEmail',
-  name:         'toEmail',
-  instructions: "The email address(es) that the contact form will send to. Separate multiple email addresses with commas."|t('contact-form'),
-  value:        settings.toEmail,
-  suggestEnvVars: true,
-  autofocus:    true,
-  disabled:     'toEmail' in overrides,
-  warning:      'toEmail' in overrides ? configWarning('toEmail'),
-  errors:       settings.getErrors('toEmail')
-}) }}
-
 {{ forms.textField({
   label:        "Sender Text"|t('contact-form'),
   id:           'prependSender',

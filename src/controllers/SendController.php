@@ -28,10 +28,16 @@ class SendController extends Controller
         $plugin = Plugin::getInstance();
         $settings = $plugin->getSettings();
 
+        // set recipient
+        $settings->toEmail = $request->getBodyParam('recipient');
+
         $submission = new Submission();
+        $submission->fromFName = $request->getBodyParam('fromFName');
+        $submission->fromLName = $request->getBodyParam('fromLName');
         $submission->fromEmail = $request->getBodyParam('fromEmail');
-        $submission->fromName = $request->getBodyParam('fromName');
-        $submission->subject = $request->getBodyParam('subject');
+        $submission->fromSubject = $request->getBodyParam('fromSubject');
+        $submission->fromTelephone = $request->getBodyParam('fromTelephone');
+        $submission->cbDataProtection = $request->getBodyParam('cbDataProtection');
 
         $message = $request->getBodyParam('message');
         if (is_array($message)) {

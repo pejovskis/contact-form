@@ -52,9 +52,11 @@ class Mailer extends Component
         $mailer = Craft::$app->getMailer();
 
         // Prep the message
+        $fromFName = $this->compileFromFName($submission->fromFName);
+        $fromLName = $this->compileFromLName($submission->fromLName);
         $fromEmail = $this->getFromEmail($mailer->from);
-        $fromName = $this->compileFromName($submission->fromName);
-        $subject = $this->compileSubject($submission->subject);
+        $fromSubject = $this->compileSubject($submission->fromSubject);
+        $fromTelephone = $this->compileTelephone($submission->fromTelephone);
         $textBody = $this->compileTextBody($submission);
         $htmlBody = $this->compileHtmlBody($textBody);
 
@@ -62,9 +64,9 @@ class Mailer extends Component
         $validAttachments = true;
 
         $message = (new Message())
-            ->setFrom([$fromEmail => $fromName])
-            ->setReplyTo([$submission->fromEmail => (string)$submission->fromName])
-            ->setSubject($subject)
+            ->setFrom([$fromEmail => $fromFName . ' ' . $fromLName])
+            ->setReplyTo([$submission->fromEmail => (string)$submission->fromEmail])
+            ->setSubject($fromSubject)
             ->setTextBody($textBody)
             ->setHtmlBody($htmlBody);
 
@@ -165,10 +167,16 @@ class Mailer extends Component
      * @param string|null $fromName
      * @return string
      */
-    public function compileFromName(string $fromName = null): string
+    public function compileFromFName(string $fromFName = null): string
     {
         $settings = Plugin::getInstance()->getSettings();
-        return $settings->prependSender . ($settings->prependSender && $fromName ? ' ' : '') . $fromName;
+        return $settings->prependSender . ($settings->prependSender && $fromFName ? ' ' : '') . $fromFName;
+    }
+
+    public function compileFromLName(string $fromLName = null): string
+    {
+        $settings = Plugin::getInstance()->getSettings();
+        return $settings->prependSender . ($settings->prependSender && $fromLName ? ' ' : '') . $fromLName;
     }
 
     /**
@@ -177,10 +185,16 @@ class Mailer extends Component
      * @param string|null $subject
      * @return string
      */
-    public function compileSubject(string $subject = null): string
+    public function compileSubject(string $fromSubject = null): string
     {
         $settings = Plugin::getInstance()->getSettings();
-        return $settings->prependSubject . ($settings->prependSubject && $subject ? ' - ' : '') . $subject;
+        return $settings->prependSubject . ($settings->prependSubject && $fromSubject ? ' - ' : '') . $fromSubject;
+    }
+
+    public function compileTelephone(string $fromTelephone = null): string
+    {
+        $settings = Plugin::getInstance()->getSettings();
+        return $settings->prependTelephone . ($settings->prependTelephone && $fromTelephone ? ' - ' : '') . $fromTelephone;
     }
 
     /**
@@ -193,8 +207,8 @@ class Mailer extends Component
     {
         $fields = [];
 
-        if ($submission->fromName) {
-            $fields[Craft::t('contact-form', 'Name')] = $submission->fromName;
+        if ($submission->fromFName && $submission->fromLName) {
+            $fields[Craft::t('contact-form', 'Name')] = $submission->fromFName . ' ' . $submission->fromLName;
         }
 
         $fields[Craft::t('contact-form', 'Email')] = $submission->fromEmail;

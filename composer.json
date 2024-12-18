@@ -1,7 +1,8 @@
 {
-  "name": "craftcms/contact-form",
-  "description": "Add a simple contact form to your Craft CMS site",
+  "name": "dotfly/contact-form",
+  "description": "Add a extended contact form to your Craft CMS site",
   "type": "craft-plugin",
+  "version": "1.0.1",
   "keywords": [
     "cms",
     "craftcms",
@@ -19,9 +20,9 @@
   "support": {
     "email": "support@craftcms.com",
     "issues": "https://github.com/craftcms/contact-form/issues?state=open",
-    "source": "https://github.com/craftcms/contact-form",
-    "docs": "https://github.com/craftcms/contact-form",
-    "rss": "https://github.com/craftcms/contact-form/commits/3.x.atom"
+    "source": "https://github.com/pejovskis/contact-form",
+    "docs": "https://github.com/craftcms/contact-form/blob/v2/README.md",
+    "rss": "https://github.com/craftcms/contact-form/commits/v2.atom"
   },
   "minimum-stability": "dev",
   "prefer-stable": true,

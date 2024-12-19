@@ -31,6 +31,12 @@ class SendController extends Controller
         // set recipient
         $settings->toEmail = $request->getBodyParam('recipient');
 
+        // Captcha verification
+        $captchaSolution = $request->getBodyParam('frc-captcha-solution');
+        if (!$this->verifyFriendlyCaptcha($captchaSolution)) {
+            return;
+        }
+
         $submission = new Submission();
         $submission->fromFName = $request->getBodyParam('fromFName');
         $submission->fromLName = $request->getBodyParam('fromLName');
@@ -72,5 +78,32 @@ class SendController extends Controller
             $settings->successFlashMessage,
             'submission',
         );
+    }
+
+    private function verifyFriendlyCaptcha(?string $captchaSolution): bool
+    {
+        if (!$captchaSolution) {
+            return false;
+        }
+
+        $httpClient = new Client();
+        $secretKey = Craft::$app->getConfig()->getConfigFromFile('friendlyCaptchaApi')['friendlyCaptchaApiKey'];
+        $verificationUrl = 'https://api.friendlycaptcha.com/api/v1/siteverify';
+
+        try {
+            $response = $httpClient->post($verificationUrl, [
+                'json' => [
+                    'solution' => $captchaSolution,
+                    'secret'   => $secretKey,
+                ],
+            ]);
+
+            $responseBody = json_decode($response->getBody(), true);
+
+            return $responseBody['success'] ?? false;
+        } catch (\Exception $e) {
+            Craft::error('Captcha verification failed: ' . $e->getMessage(), __METHOD__);
+            return false;
+        }
     }
 }

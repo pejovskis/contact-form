@@ -2,7 +2,7 @@
   "name": "dotfly/contact-form",
   "description": "Add a extended contact form to your Craft CMS site",
   "type": "craft-plugin",
-  "version": "1.0.1",
+  "version": "1.0.3",
   "keywords": [
     "cms",
     "craftcms",

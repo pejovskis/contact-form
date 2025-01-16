@@ -55,6 +55,8 @@ class Submission extends Model
     public $attachment;
 
     public $cbDataProtection;
+    public $fromCustomerLink;
+    public $fromCustomerWebsite;
 
     /**
      * @inheritdoc
@@ -68,6 +70,8 @@ class Submission extends Model
             'fromSubject' => \Craft::t('contact-form', 'Subject'),
             'fromTelephone' => \Craft::t('contact-form', 'Telephone'),
             'message' => \Craft::t('contact-form', 'Message'),
+            'fromCustomerLink' => \Craft::t('contact-form', 'Customer Link'),
+            'fromCustomerWebsite' => \Craft::t('contact-form', 'Customer Website'),
         ];
     }
 
@@ -77,7 +81,8 @@ class Submission extends Model
     protected function defineRules(): array
     {
         $rules = [];
-        $fields = ['fromFName', 'fromLName', 'fromEmail', 'message', 'fromSubject', 'fromTelephone', 'cbDataProtection'];
+        $fields = ['fromFName', 'fromLName', 'fromEmail', 'message', 'fromSubject', 'fromTelephone', 'cbDataProtection',
+            'fromCustomerLink', 'fromCustomerWebsite'];
 
         // Loop through each field and add a 'required' rule only if it exists in the request
         $request = \Craft::$app->getRequest();

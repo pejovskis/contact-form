@@ -44,6 +44,8 @@ class SendController extends Controller
         $submission->fromSubject = $request->getBodyParam('fromSubject');
         $submission->fromTelephone = $request->getBodyParam('fromTelephone');
         $submission->cbDataProtection = $request->getBodyParam('cbDataProtection');
+        $submission->fromCustomerLink = $request->getBodyParam('fromCustomerLink');
+        $submission->fromCustomerWebsite = $request->getBodyParam('fromCustomerWebsite');
 
         $message = $request->getBodyParam('message');
         if (is_array($message)) {

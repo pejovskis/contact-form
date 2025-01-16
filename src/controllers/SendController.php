@@ -8,6 +8,7 @@ use craft\contactform\Plugin;
 use craft\web\Controller;
 use craft\web\UploadedFile;
 use yii\web\Response;
+use GuzzleHttp\Client;
 
 class SendController extends Controller
 {

@@ -56,7 +56,6 @@ class Mailer extends Component
         $fromLName = $this->compileFromLName($submission->fromLName);
         $fromEmail = $this->getFromEmail($mailer->from);
         $fromSubject = $this->compileSubject($submission->fromSubject);
-        $fromTelephone = $this->compileTelephone($submission->fromTelephone);
         $textBody = $this->compileTextBody($submission);
         $htmlBody = $this->compileHtmlBody($textBody);
 
@@ -191,12 +190,6 @@ class Mailer extends Component
         return $settings->prependSubject . ($settings->prependSubject && $fromSubject ? ' - ' : '') . $fromSubject;
     }
 
-    public function compileTelephone(string $fromTelephone = null): string
-    {
-        $settings = Plugin::getInstance()->getSettings();
-        return $settings->prependTelephone . ($settings->prependTelephone && $fromTelephone ? ' - ' : '') . $fromTelephone;
-    }
-
     /**
      * Compiles the real email textual body from the submitted message.
      *
@@ -207,16 +200,43 @@ class Mailer extends Component
     {
         $fields = [];
 
-        if ($submission->fromFName && $submission->fromLName) {
-            $fields[Craft::t('contact-form', 'Name')] = $submission->fromFName . ' ' . $submission->fromLName;
+        // Basic contact fields
+        if ($submission->fromFName || $submission->fromLName) {
+            $fields[Craft::t('contact-form', 'Name')] = trim(($submission->fromFName ?? '') . ' ' . ($submission->fromLName ?? ''));
+        }
+
+        if ($submission->fromCompany) {
+            $fields[Craft::t('contact-form', 'Company')] = $submission->fromCompany;
         }
 
         $fields[Craft::t('contact-form', 'Email')] = $submission->fromEmail;
 
+        if ($submission->fromTelephone) {
+            $fields[Craft::t('contact-form', 'Telephone')] = $submission->fromTelephone;
+        }
+
+        if ($submission->fromCustomerLink) {
+            $fields[Craft::t('contact-form', 'Customer Link')] = $submission->fromCustomerLink;
+        }
+
+        if ($submission->fromCustomerWebsite) {
+            $fields[Craft::t('contact-form', 'Customer Website')] = $submission->fromCustomerWebsite;
+        }
+
+        if ($submission->fromSubject) {
+            $fields[Craft::t('contact-form', 'Subject')] = $submission->fromSubject;
+        }
+
+        if ($submission->cbDataProtection) {
+            $fields[Craft::t('contact-form', 'Data Protection Accepted')] = 'Yes';
+        }
+
+        // Process the message field
         if (is_array($submission->message)) {
             $settings = Plugin::getInstance()->getSettings();
             $messageFields = array_merge($submission->message);
             $body = ArrayHelper::remove($messageFields, 'body', '');
+
             foreach ($messageFields as $key => $value) {
                 if ($settings->allowedMessageFields === null || in_array($key, $settings->allowedMessageFields)) {
                     $label = Craft::t('site', $key);
@@ -227,15 +247,10 @@ class Mailer extends Component
             $body = (string)$submission->message;
         }
 
+        // Format the email content
         $text = '';
-
         foreach ($fields as $key => $value) {
-            $text .= ($text ? "\n" : '') . "- **{$key}:** ";
-            if (is_array($value)) {
-                $text .= implode(', ', $value);
-            } else {
-                $text .= $value;
-            }
+            $text .= ($text ? "\n" : '') . "- **{$key}:** " . (is_array($value) ? implode(', ', $value) : $value);
         }
 
         if ($body !== '') {

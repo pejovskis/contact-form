@@ -57,6 +57,7 @@ class Submission extends Model
     public $cbDataProtection;
     public $fromCustomerLink;
     public $fromCustomerWebsite;
+    public $fromCompany;
 
     /**
      * @inheritdoc
@@ -66,8 +67,9 @@ class Submission extends Model
         return [
             'fromFName' => \Craft::t('contact-form', 'Your Name'),
             'fromLName' => \Craft::t('contact-form', 'Your Last Name'),
-            'fromEmail' => \Craft::t('contact-form', 'Your Email'),
             'fromSubject' => \Craft::t('contact-form', 'Subject'),
+            'fromEmail' => \Craft::t('contact-form', 'Your Email'),
+            'fromCompany' => \Craft::t('contact-form', 'Company'),
             'fromTelephone' => \Craft::t('contact-form', 'Telephone'),
             'message' => \Craft::t('contact-form', 'Message'),
             'fromCustomerLink' => \Craft::t('contact-form', 'Customer Link'),
@@ -80,22 +82,11 @@ class Submission extends Model
      */
     protected function defineRules(): array
     {
-        $rules = [];
-        $fields = ['fromFName', 'fromLName', 'fromEmail', 'message', 'fromSubject', 'fromTelephone', 'cbDataProtection',
-            'fromCustomerLink', 'fromCustomerWebsite'];
-
-        // Loop through each field and add a 'required' rule only if it exists in the request
-        $request = \Craft::$app->getRequest();
-        foreach ($fields as $field) {
-            if ($request->getBodyParam($field) !== null) {
-                $rules[] = [[$field], 'required'];
-            }
-        }
-
-        if ($request->getBodyParam('fromEmail') !== null) {
-            $rules[] = [['fromEmail'], 'email'];
-        }
-
-        return $rules;
+        return [
+            [['fromEmail', 'cbDataProtection'], 'required'],
+            [['fromEmail'], 'email'],
+            [['fromFName', 'fromLName', 'fromSubject', 'fromTelephone', 'message', 'fromCustomerLink', 'fromCustomerWebsite', 'fromCompany'], 'safe'],
+        ];
     }
+
 }

@@ -227,10 +227,6 @@ class Mailer extends Component
             $fields[Craft::t('contact-form', 'Subject')] = $submission->fromSubject;
         }
 
-        if ($submission->cbDataProtection) {
-            $fields[Craft::t('contact-form', 'Data Protection Accepted')] = 'Yes';
-        }
-
         // Process the message field
         if (is_array($submission->message)) {
             $settings = Plugin::getInstance()->getSettings();
